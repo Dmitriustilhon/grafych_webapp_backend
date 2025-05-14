@@ -1,3 +1,4 @@
+from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton, WebAppInfo
 from fastapi import FastAPI, Request
 from pydantic import BaseModel
 from utils.pdf_gen import generate_pdf
@@ -26,6 +27,14 @@ async def create_pdf(data: PDFRequest):
     }
     filename = f"grafych_{data.user['id']}.pdf"
     pdf_path = generate_pdf("Генерация из WebApp", filename, title_info)
+from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton, WebAppInfo
+
+@dp.message_handler(commands=["webapp"])
+async def send_webapp(message: types.Message):
+    keyboard = InlineKeyboardMarkup().add(
+        InlineKeyboardButton("🧾 Открыть WebApp", web_app=WebAppInfo(url="https://grafych.ru"))
+    )
+    await message.reply("Заполни данные для титульного листа прямо тут:", reply_markup=keyboard)
 
     # отправка в Telegram
     with open(pdf_path, "rb") as doc:
